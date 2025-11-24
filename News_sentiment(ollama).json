@@ -1,0 +1,453 @@
+{
+  "name": "News sentiment(ollama)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "55839e42-c2ec-4396-a634-9f5a091b5036",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "bfb59c67-75d2-4c53-b012-4f5473f0faba",
+      "name": "Webhook1",
+      "webhookId": "55839e42-c2ec-4396-a634-9f5a091b5036"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        320,
+        0
+      ],
+      "id": "ee2abe15-b950-4307-beda-d7c48c78f8de",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "37e7f190-5f58-4b7b-939d-2c5d2a0ad59f",
+              "leftValue": "={{ $json.pubDate }}",
+              "rightValue": "={{ $today }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        0
+      ],
+      "id": "21e63252-6497-4592-9fc8-9c7db46f53fe",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "url": "=https://openapi.naver.com/v1/search/news.json?query={{ $json.body.keyword }}&display=100&sort=date",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Naver-Client-Id",
+              "value": "xxxxxxxxx"
+            },
+            {
+              "name": "X-Naver-Client-Secret",
+              "value": "xxxxxxx"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        0
+      ],
+      "id": "1aca8af8-a54b-4a16-8a42-e384a15ce5c2",
+      "name": "HTTP Request(NAVER)"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.link }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+            },
+            {}
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": false
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        48,
+        208
+      ],
+      "id": "e7a093ba-1f24-44e9-8d1d-360bc01fcf56",
+      "name": "HTTP Request1(News Story)",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1bQ9WWrkDyaEdwggv79-9qlaAxxxxxx",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bQ9WWrkDyaEdwggv79-9qlxxxxxxxxxO0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $today }}",
+            "neural ": "={{ $json.count2 }}",
+            "body": "=",
+            "bad": "={{ $json.count3 }}",
+            "good": "={{ $json.count1 }}"
+          },
+          "matchingColumns": [
+            "date"
+          ],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "good",
+              "displayName": "good",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "neural ",
+              "displayName": "neural ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "bad",
+              "displayName": "bad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "body",
+              "displayName": "body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        544
+      ],
+      "id": "24448185-346f-4084-bc90-980b0eb722fc",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "RXOxkg4asxxxxxxx6b",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "options": {
+          "systemMessage": "You are highly intelligent and accurate sentiment analyzer. Analyze the sentiment of the provided text. Categorize it into one of the following: Positive, Neutral, Negative.  Use a json format for a response.   For example, {\"sentiment: Positive\"}.  No explanation is needed.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        528,
+        208
+      ],
+      "id": "a61accec-370b-4ddc-adec-704cac08b932",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "exaone3.5:32b",
+        "options": {
+          "temperature": 0,
+          "topK": 1,
+          "topP": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        512,
+        400
+      ],
+      "id": "b9681768-4fa8-4e62-b540-7cffe9db8823",
+      "name": "Ollama Chat Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "DChJxZTDfCobM9mo",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const cheerio = require('cheerio');\nconst keyword = $('Webhook1').first().json.body.keyword;\n\nfor (const item of $input.all()) {\n  const $ = cheerio.load(item.json.data); // Assuming 'html_body' contains your HTML\n  \n  // Example: Extract text from all paragraph tags\n  var extractedText = \"\";\n  $('body').each((i, element) => {\n    extractedText += $(element).text();\n  });\n\n  // remove spaces between \\n and \\t\n  var temp_text = extractedText.replaceAll(/\\n[ ]+\\n/g, \"\\n\\n\").replaceAll(/\\n[ ]+\\t/g, \"\\n\\t\").replaceAll(/\\t[ ]+\\n/g, \"\\t\\n\").replaceAll(/\\t[ ]+\\t/g, \"\\t\\t\");\n  // \\n   \\n<sp sp sp>\\n   \n  temp_text = temp_text.replaceAll(/\\n[ ]+\\n/g, \"\\n\\n\").replaceAll(/\\n[ ]+\\t/g, \"\\n\\t\").replaceAll(/\\t[ ]+\\n/g, \"\\t\\n\").replaceAll(/\\t[ ]+\\t/g, \"\\t\\t\");\n\n  \n  var main_text = \"\";\n  // ten+ tab or newlines are delimiters \n  const texts = temp_text.split(/[\\t\\n][\\t\\n][\\t\\n][\\t\\n][\\t\\n][\\t\\n][\\t\\n][\\t\\n][\\t\\n][\\t\\n]+/); \n  for (const t of texts) {\n    // to be big and to have a keyword\n    if (t.length > main_text.length && t.includes(keyword)) {\n      main_text = t;\n    }\n  }\n  item.json.data = \"\";\n  item.json.text = main_text;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        208
+      ],
+      "id": "5c36c221-a625-4101-98c3-7dc2094ef388",
+      "name": "extract text"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.prompt = \"Judge the sentiment of the following sentences about \" +       \n    $('Webhook1').first().json.body.keyword + \n    \"only and display Positive, Neutral and Negative in a json format.  For example, \\\"sentiment: Positive.\\\"\" + \n    \"\\n\\n\\\"\" + item.json.text + \"\\\"\"; \n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        208
+      ],
+      "id": "440371c2-4fc7-4570-9732-a268edf07ef0",
+      "name": "compose prompt"
+    },
+    {
+      "parameters": {
+        "jsCode": "var results = [];\nfor (const item of $input.all()) {\n  try {\n    results.push(JSON.parse(item.json.output.replace(\"\\`\\`\\`json\", \"\").replace(\"\\`\\`\\`\", \"\")));\n  } catch (e) {\n    console.log(\"JSON parsing:\", e);\n  }\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        544
+      ],
+      "id": "8d2f5648-3d96-49f6-81e5-886eb8ccd4dc",
+      "name": "simplify in json"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nlet positive = 0;\nlet neutral = 0;\nlet negative = 0;\nfor (const item of $input.all()) {  \n  if (item.json.sentiment == \"Positive\") {\n    positive++;\n  } else if (item.json.sentiment == \"Neutral\") {\n    neutral++;\n  } else if (item.json.sentiment == \"Negative\") {\n    negative++;\n  }\n}\nreturn [{ json: { count1: positive, count2: neutral, count3: negative }}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        544
+      ],
+      "id": "ed7797c6-30cf-489f-b189-30f165a5b1df",
+      "name": "count"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request(NAVER)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1(News Story)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request(NAVER)": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1(News Story)": {
+      "main": [
+        [
+          {
+            "node": "extract text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract text": {
+      "main": [
+        [
+          {
+            "node": "compose prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "compose prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "simplify in json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "simplify in json": {
+      "main": [
+        [
+          {
+            "node": "count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "count": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "ea058c14-dfcd-4ec0-a050-157237db9b19",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5cd7452c1d5afd3a93bfb178a468dfa0bc24c266ab3f819a81f20bcd40bed1df"
+  },
+  "id": "j4PlnwxAU9d5yih3",
+  "tags": []
+}
