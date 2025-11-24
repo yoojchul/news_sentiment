@@ -25,12 +25,13 @@ n8n를 이용해서 기사 내용을 판별하는 workflow를 작성합니다. �
  Webhook1는 아래 명령어로 시작합니다.
 
 ```
-# curl -d "keyword=LG화학"  -H "Content-Type: application/x-www-form-urlencoded" -X POST http://localhost:5678/webhook-test/4b71a486-e711-4de0-a721-462c92bcc540
+# curl -d "keyword=LG화학"  -H "Content-Type: application/x-www-form-urlencoded" -X POST http://localhost:5678/webhook-test/55839e42-c2ec-4396-a634-9f5a091b5036
 ```
 
 ### n8n environments
 ```
 n8n : 1.118.2
+cheerio : 1.1.2
 nodejs : v22.21.0
 OS: ubuntu 24.04.02
 export N8N_SECURE_COOKIE=false
